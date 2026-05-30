@@ -48,6 +48,20 @@ function connection._readpacket(self, codec, buf)
     return codec.read(r)
 end
 
+function connection._mkscramnonce(self, length: number?) 
+    local alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
+    local alphalen = #alpha
+    local noncelen = length or 24
+
+    local chars = bufpool.take(noncelen)
+    for i = 1, noncelen, 1 do 
+        local rin = zune.crypto.random.nextInteger(1, alphalen)
+        buffer.writeu8(chars, i, string.byte(string.sub(alpha, rin, rin)))
+    end
+
+    return chars
+end
+
 function connection._authenticate(self) 
     local respbuf = self.sock:recv()
     local resp = self:_readpacket(protocol._AuthenticationGeneric, respbuf)
