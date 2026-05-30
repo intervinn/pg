@@ -43,8 +43,14 @@ function connection._recvpacket(self, codec)
     return codec.read(resr)
 end
 
+function connection._readpacket(self, codec, buf) 
+    local r = reader.new(buf)
+    return codec.read(r)
+end
+
 function connection._authenticate(self) 
-    local resp = self:_recvpacket(protocol._AuthenticationGeneric)
+    local respbuf = self.sock:recv()
+    local resp = self:_readpacket(protocol._AuthenticationGeneric, respbuf)
     local method = resp.method
 
     if method == 0 then 
@@ -56,23 +62,45 @@ function connection._authenticate(self)
         -- AuthenticationKerberosV5
         return {
             ok = false,
-            error = "kerberos v5 not implemented"
+            error = "AuthenticationKerberosV5 not implemented"
         }
     elseif method == 3 then
         -- AuthenticationClearTextPassword
-        return {}
+        return {
+            ok = false,
+            error = "AuthenticationClearTextPassword not implemented"
+        }
     elseif method == 5 then
         -- AuthenticationMD5Password
-        return {}
+        return {
+            ok = false,
+            error = "AuthenticationMD5Password not implemented"
+        }
     elseif method == 7 then
         -- AuthenticationGSS
-        return {}
+        return {
+            ok = false,
+            error = "AuthenticationGSS not implemented"
+        }
     elseif method == 9 then
         -- AuthenticationSSPI
-        return {}
+        return {
+            ok = false,
+            error = "AuthenticationSSPI not implemented"
+        }
     elseif method == 10 then
         -- AuthenticationSASL
-        return {}
+        local packet = self:_readpacket(protocol.AuthenticationSASL, respbuf)
+        
+        if packet.mechanism == "SCRAM-SHA-256" then 
+            -- 1. send initial response
+            
+        end
+
+        return {
+            ok = false,
+            error = "AuthenticationSASL: unsupported mechanism"
+        }
     end
 end
 

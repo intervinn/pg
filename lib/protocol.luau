@@ -17,6 +17,22 @@ return table.freeze({
             {name = "method", codec = codec.i32()},
             {name = "other", codec = codec.bytes()}
         })
-    })
+    }),
 
+    AuthenticationSASL = codec.packet({
+        id = string.byte("R"),
+        codec = codec.struct({
+            {name = "method", codec = codec.i32()},
+            {name = "mechanism", codec = codec.string()}
+        })
+    }),
+
+    SASLInitialResponse = codec.packet({
+        id = string.byte("p"),
+        codec = codec.struct({
+            {name = "name", codec = codec.string()},
+            {name = "length", codec = codec.i32()},
+            {name = "response", codec = codec.bytes()}
+        })
+    })
 })
