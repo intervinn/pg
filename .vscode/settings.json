@@ -1,0 +1,8 @@
+{
+  "luau-lsp.types.definitionFiles": {
+    "zune": "/home/int/.zune/typedefs/global/zune.d.luau"
+  },
+  "luau-lsp.types.documentationFiles": [
+    "/home/int/.zune/typedefs/global/zune.d.json"
+  ]
+}
